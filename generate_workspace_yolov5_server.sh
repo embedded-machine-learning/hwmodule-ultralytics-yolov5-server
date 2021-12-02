@@ -29,8 +29,8 @@ mv yolov5 yolov5-oxford-pets
 cd $ROOTFOLDER
 
 cd ./venv
-virtualenv -p python3.8 yolov5_pv38
-source yolov5_pv38/bin/activate
+virtualenv -p python3.8 yolov5_py38
+source yolov5_py38/bin/activate
 
 # Install necessary libraries
 python -m pip install --upgrade pip
@@ -44,7 +44,7 @@ pip install -r requirements.txt
 pip install lxml xmltodict tdqm beautifulsoup4 pycocotools
 
 # Install OpenVino libraries
-pip install onnx-simplifier networkx defusedxml
+pip install onnx-simplifier networkx defusedxml requests
 
 # Activate YoloV5 environment
-source ./venv/yolov5_pv38/bin/activate
+source ./venv/yolov5_py38/bin/activate
