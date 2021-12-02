@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 ###
 # Functions
@@ -6,22 +6,11 @@
 
 setup_env()
 {
-  PYTHONENV=venv_yolov5
+  # Init environment
+  . ./init_env.sh
   
-  # Environment preparation
-  echo "Activate environment $PYTHONENV"
-  #call conda activate %PYTHONENV%
-  . ~/init_eda_env.sh
-
-  # echo "Activate python environment and add python path variables" $PYTHONENV
-  #source $PYTHONENV
-  
-  # Environment preparation
-  echo "Activate environment $PYTHONENV"
-  source /srv/cdl-eml/tf2odapi/venv/$PYTHONENV/bin/activate
-  
-  echo "Setup task spooler socket."
-  . ~/init_eda_ts.sh
+  # echo "Setup task spooler socket."
+  . ./init_ts.sh
   
   # Set alias python3 if applicable
   alias python=python3
@@ -159,7 +148,7 @@ evaluate_model()
   echo "# Evaluate with Coco Metrics"
   echo "#====================================#"
   echo "coco evaluation"
-  python $SCRIPTPREFIX/inference_evaluation/objdet_pycoco_evaluation.py \
+  python $SCRIPTPREFIX/inference_evaluation/eval_pycocotools.py \
   --groundtruth_file="$DATASET/annotations/coco_val_annotations.json" \
   --detection_file="results/$MODELNAME/$HARDWARENAME/coco_detections.json" \
   --output_file="results/performance_$HARDWARENAME.csv" \
@@ -171,7 +160,7 @@ evaluate_model()
   echo "# Merge results to one result table"
   echo "#====================================#"
   echo "merge latency and evaluation metrics"
-  python $SCRIPTPREFIX/inference_evaluation/merge_results.py \
+  python $SCRIPTPREFIX/inference_evaluation/eval_merge_results.py \
   --latency_file="results/latency_$HARDWARENAME.csv" \
   --coco_eval_file="results/performance_$HARDWARENAME.csv" \
   --output_file="results/combined_results_$HARDWARENAME.csv"
@@ -191,12 +180,13 @@ echo "#==============================================#"
 USERNAME=wendt
 USEREMAIL=alexander.wendt@tuwien.ac.at
 #MODELNAME=tf2oda_efficientdetd0_320_240_coco17_pedestrian_all_LR002
-#MODELNAME=pt_yolov5s_640x360_peddet_OLD
-SCRIPTPREFIX=../../scripts-and-guides/scripts
-DATASET=../../datasets/oxford_pets
+SCRIPTPREFIX=../../eml-tools
+#Validation dataset (not the training dataset)
+DATASET=../../../datasets/dataset-oxford-pets-val-debug
+#Hardware name
 HARDWARENAME=TeslaV100
 # Set this variable true if the network shall be trained, else only inference shall be performed
-TRAINNETWORK=false
+TRAINNETWORK=true
 
 ############################################
 ### Yolo settings ##########################
@@ -206,7 +196,7 @@ TRAINNETWORK=false
 #YOLOVERSION=yolov5m
 #YOLOVERSION=yolov5l
 #YOLOVERSION=yolov5x
-YOLOVERSION=yolov5s_pedestrian
+YOLOVERSION=yolov5s_pets
 
 # Yolo pretrained weights. Location ./weights/[WEIGHT_NAME].pt.
 # Weights for small versions of yolo, image size 640
@@ -226,22 +216,13 @@ YOLOIMGSIZE=640
 #you only supply the longest dimension, --img 640. The rest is handled automatically.
 
 # Yolo dataset reference. ./data/[DATASET].yaml
-YOLODATA=peddet
+YOLODATA=oxford_pets
 
 # Set training batch size
 BATCHSIZE=32
-EPOCHS=300
+EPOCHS=1
 
 ############################################
-
-#SCRIPTPREFIX=../../scripts-and-guides/scripts/training
-
-
-#Extract model name from this filename
-#MYFILENAME=`basename "$0"`
-#MODELNAME=`echo $MYFILENAME | sed 's/tf2oda_train_eval_export_//' | sed 's/.sh//'`
-#echo Selected model: $MODELNAME
-
 
 # Environment preparation
 setup_env
