@@ -220,7 +220,7 @@ YOLODATA=oxford_pets
 
 # Set training batch size
 BATCHSIZE=32
-EPOCHS=1
+EPOCHS=300
 
 ############################################
 
